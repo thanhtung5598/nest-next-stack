@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum Start
+enum UserRole {
+  admin
+  employee
+}
+
+enum DeviceStatus {
+  in_stock
+  maintenance
+  retired
+}
+
+enum UsingStatus {
+  requesting
+  using
+  returning
+}
+
+// Enum End
+
+model Department {
+  id        Int      @id @default(autoincrement())
+  name      String
+  users     User[]
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  departmentDevices DepartmentDevice[]
+
+  @@map("department")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  avatarUrl    String?  @map("avatar_url")
+  isActive     Boolean  @default(true) @map("is_active")
+  accessToken  String?  @unique @map("access_token")
+  refreshToken String?  @unique @map("refresh_token")
+  role         UserRole
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  departmentId Int      @map("department_id")
+
+  // Relations
+  userDevices            UserDevice[]
+  borrowRequests         BorrowRequest[]    @relation("requestUser")
+  approvalBorrowRequests BorrowRequest[]    @relation("approver")
+  department             Department         @relation(fields: [departmentId], references: [id])
+  notifications          UserNotification[]
+
+  @@map("user")
+}
+
+model Device {
+  id                Int          @id @default(autoincrement())
+  categoryId        Int          @map("category_id")
+  brandId           Int?         @map("brand_id")
+  name              String
+  serialNumber      String?      @unique @map("serial_number")
+  status            DeviceStatus @default(in_stock)
+  buyAt             DateTime?    @map("buy_at")
+  usedAt            DateTime?    @map("used_at")
+  expiredWarrantyAt DateTime?    @map("expired_warranty_at")
+  price             Decimal?     @db.Decimal(10, 2)
+  priceVat          Decimal?     @map("price_vat") @db.Decimal(10, 2)
+  imageUrl          String?      @map("image_url")
+  note              String?
+  sku               String       @unique
+  model             String?
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  category         Category          @relation(fields: [categoryId], references: [id])
+  brand            Brand?            @relation(fields: [brandId], references: [id])
+  requests         BorrowRequest[]
+  departmentDevice DepartmentDevice?
+  userDevice       UserDevice?
+
+  @@map("device")
+}
+
+model DepartmentDevice {
+  deviceId     Int      @id @map("device_id")
+  departmentId Int      @map("department_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  device     Device     @relation(fields: [deviceId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  @@map("department_device")
+}
+
+model UserDevice {
+  deviceId  Int      @id @map("device_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  device Device @relation(fields: [deviceId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@map("user_device")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  devices Device[]
+
+  @@map("category")
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  devices Device[]
+
+  @@map("brand")
+}
+
+model BorrowRequest {
+  id              Int          @id @default(autoincrement())
+  userId          String       @map("user_id")
+  deviceId        Int          @map("device_id")
+  note            String?
+  borrowedAt      DateTime     @default(now()) @map("borrowed_at")
+  returnedAt      DateTime?    @map("returned_at")
+  status          UsingStatus? @default(requesting)
+  approvedAt      DateTime?    @map("approved_at")
+  approvedBy      String?      @map("approved_by")
+  rejectedAt      DateTime?    @map("rejected_at")
+  rejectionReason String?      @map("rejection_reason")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  user     User   @relation("requestUser", fields: [userId], references: [id])
+  approver User?  @relation("approver", fields: [approvedBy], references: [id])
+  device   Device @relation(fields: [deviceId], references: [id])
+
+  @@map("borrow_request")
+}
+
+model UserNotification {
+  id         Int       @id @default(autoincrement())
+  userId     String    @map("user_id")
+  checkedAt  DateTime? @map("checked_at")
+  notifiedAt DateTime? @map("notified_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  targetUri  String?   @map("target_uri")
+  title      String
+  body       String?   @db.Text
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_notification")
+}

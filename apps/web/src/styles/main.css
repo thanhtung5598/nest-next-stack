@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #05070a;
+    --text: #ffffff;
+    --error: #ee1100;
+    --highlight-100: #22aaee;
+  }
+}
+
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+  }
+}
+
+.containerWrapper {
+  @apply before:content-[''] before:absolute before:bg-primary before:inset-0 before:z-[-1] before:bg-[radial-gradient(ellipse_at_center,_hsl(210,100%,97%),_hsl(0,0%,100%))] before:bg-no-repeat dark:before:bg-[radial-gradient(ellipse_at_center,_hsla(210,100%,16%,0.5),_hsl(220,30%,5%))];
+}
