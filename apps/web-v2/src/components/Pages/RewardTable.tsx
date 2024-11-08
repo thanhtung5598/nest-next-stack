@@ -2,22 +2,15 @@
 
 import { Table } from '@mui/joy';
 import { TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { header } from './BitContainer';
 import { formatVND } from '@/libs/functions';
+import lotteryResult from '@/libs/lotteryResults.json';
+import { TotalRewardProps } from './BitContainer';
 
-type TotalRewardProps = {
-  data: Partial<{
-    amount?: number;
-    daiIndex?: 0;
-    reward?: 300000;
-    type?: 'Bao' | 'DD' | 'XC' | 'DA';
-    lo?: string;
-    winLo?: string[];
-    pairsOfWinLo?: { [key: string]: string }[];
-  }>[];
+type RewardTableProps = {
+  data: Partial<TotalRewardProps>[];
 };
 
-export function RewardTable({ data }: TotalRewardProps) {
+export function RewardTable({ data }: RewardTableProps) {
   return (
     <TableContainer
       sx={{
@@ -45,8 +38,9 @@ export function RewardTable({ data }: TotalRewardProps) {
         </TableHead>
         <TableBody>
           {data.map((item) => {
-            const { amount, daiIndex, lo = '', reward, type = '', winLo, pairsOfWinLo } = item;
-            const dai = daiIndex !== undefined && header[daiIndex + 1];
+            const { amount, daiIndex, lo = '', reward, type = '' } = item;
+            const dai =
+              daiIndex !== undefined && lotteryResult[0]?.provinces[daiIndex + 1]?.province;
             return (
               <TableRow>
                 <TableCell>{dai}</TableCell>

@@ -1,69 +1,12 @@
 /* eslint-disable */
+import lotteryResult from './lotteryResults.json';
 
-export const DAI_1 = [
-  '51',
-  '232',
-  '6822',
-  '8969',
-  '6132',
-  '3934',
-  '16256',
-  '78378',
-  '71734',
-  '38235',
-  '43444',
-  '77958',
-  '89481',
-  '89579',
-  '04343',
-  '51279',
-  '31281',
-  '066479',
-];
+const formattedData = lotteryResult?.[0]?.provinces.map((provinceData) => {
+  const prizes = Object.values(provinceData.results).flat();
+  return prizes;
+});
 
-export const DAI_2 = [
-  '19',
-  '451',
-  '9963',
-  '4885',
-  '3010',
-  '2471',
-  '92255',
-  '43671',
-  '07019',
-  '72688',
-  '78243',
-  '68636',
-  '68503',
-  '77361',
-  '70112',
-  '20821',
-  '24097',
-  '533584',
-];
-
-export const DAI_3 = [
-  '19',
-  '451',
-  '9963',
-  '4885',
-  '3010',
-  '2471',
-  '92255',
-  '43671',
-  '07019',
-  '72688',
-  '78243',
-  '68636',
-  '68503',
-  '77361',
-  '70112',
-  '20821',
-  '24097',
-  '533584',
-];
-
-export const DAIS = [DAI_1, DAI_2, DAI_3];
+const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
 
 // Mien Nam
 // Bao lo
@@ -357,22 +300,24 @@ export const calculateTotalAmountReward = (baoLotList) => {
             const mapWinLo = winLo.map((item) => item.slice(-2));
             const pairsOfWinLo = findPairs(mapWinLo, daNumber);
 
-            if (daiPositionList.length === 1) {
-              reward = pairsOfWinLo.length * amount * 750000;
-            }
+            if (pairsOfWinLo.length) {
+              if (daiPositionList.length === 1) {
+                reward = pairsOfWinLo.length * amount * 750000;
+              }
 
-            if (daiPositionList.length === 2) {
-              reward = pairsOfWinLo.length * amount * 550000;
-            }
+              if (daiPositionList.length === 2) {
+                reward = pairsOfWinLo.length * amount * 550000;
+              }
 
-            winRewards.push({
-              daiIndex,
-              pairsOfWinLo,
-              lo: daNumber,
-              type: 'DA',
-              amount,
-              reward,
-            });
+              winRewards.push({
+                daiIndex,
+                pairsOfWinLo,
+                lo: daNumber,
+                type: 'DA',
+                amount,
+                reward,
+              });
+            }
           }
         });
       }

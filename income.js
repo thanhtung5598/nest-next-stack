@@ -1,51 +1,17 @@
-const DAI_1 = [
-  '51',
-  '232',
-  '6822',
-  '8969',
-  '6132',
-  '3934',
-  '16256',
-  '78378',
-  '71734',
-  '38235',
-  '43444',
-  '77958',
-  '89472',
-  '89579',
-  '04343',
-  '51279',
-  '31281',
-  '066479',
-];
+const lotteryResult = require('./apps/web-v2/src/libs/lotteryResults.json');
 
-const DAI_2 = [
-  '19',
-  '451',
-  '9963',
-  '4885',
-  '3010',
-  '2471',
-  '92255',
-  '43671',
-  '07019',
-  '72688',
-  '78243',
-  '68636',
-  '68503',
-  '77361',
-  '70112',
-  '20821',
-  '24097',
-  '533584',
-];
+const formattedData = lotteryResult[0].provinces.map((provinceData) => {
+  const prizes = Object.values(provinceData.results).flat();
+  return prizes;
+});
 
-const DAIS = [DAI_1, DAI_2];
+const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
 
 // Mien Nam
 // Bao lo
-const mergeBaoLoCheck =
-  '32b2n2dai12, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 84dd3n2dai12, 38dd8n2dai, 40dd2n2dai, 479xc25n2dai12, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai12, [79.81]da2n1dai1';
+// const mergeBaoLoCheck =
+//   '32b2n2dai12, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 84dd3n2dai12, 38dd8n2dai, 40dd2n2dai, 479xc25n2dai12, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai12, [79.81]da2n1dai1';
+const mergeBaoLoCheck = '';
 
 const splitMergedBaoLo = mergeBaoLoCheck.split(',').map((de) => de.trim());
 

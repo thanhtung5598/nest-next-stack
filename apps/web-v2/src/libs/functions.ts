@@ -14,7 +14,7 @@ export function pathParser(path: string, slug?: number | number[] | string | str
 }
 
 export const formatVND = (value: number | undefined) =>
-  value ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value) : '';
+  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
 
 export const formatDate = (dayString: string) => {
   if (!dayString) return;

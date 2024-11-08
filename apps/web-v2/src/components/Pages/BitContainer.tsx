@@ -1,21 +1,21 @@
 'use client';
 
-import { Fragment, useState } from 'react';
-import { calculateTotalAmountReward, calculateTotalStake, DAI_1, DAI_2, DAI_3 } from '@/libs/bit';
+import { useState } from 'react';
+import { calculateTotalAmountReward, calculateTotalStake } from '@/libs/bit';
 import { Box, Button, Chip, FormLabel, Table } from '@mui/joy';
 import { TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Form from '../Common/Form';
 import { useForm } from 'react-hook-form';
 import { RewardTable } from './RewardTable';
-import { formatVND } from '@/libs/functions';
+import { cn, formatVND } from '@/libs/functions';
+import lotteryResult from '@/libs/lotteryResults.json';
 
-export const header = ['Thứ 3', 'Bến Tre', 'Vũng Tàu', 'Bạc Liêu'];
-
-type TotalRewardProps = {
+export type TotalRewardProps = {
   amount?: number;
-  daiIndex?: 0;
-  reward?: 300000;
+  daiIndex?: number;
+  reward?: number;
   type?: 'Bao' | 'DD' | 'XC' | 'DA';
+  lo?: string;
   winLo?: string[];
   pairsOfWinLo?: { [key: string]: string }[];
 };
@@ -25,17 +25,17 @@ export function BitContainer() {
   const [totalAmountToSpend, setTotalAmountToSpend] = useState<any>();
   const [totalAmountReward, setTotalAmountReward] = useState<TotalRewardProps[]>([]);
 
-  const prizeLevels = [
-    { name: 'Giải tám', rows: 1, indexes: [0] },
-    { name: 'Giải bảy', rows: 1, indexes: [1] },
-    { name: 'Giải sáu', rows: 3, indexes: [2, 3, 4] },
-    { name: 'Giải năm', rows: 1, indexes: [5] },
-    { name: 'Giải tư', rows: 7, indexes: [6, 7, 8, 9, 10, 11, 12] },
-    { name: 'Giải ba', rows: 2, indexes: [13, 14] },
-    { name: 'Giải nhì', rows: 1, indexes: [15] },
-    { name: 'Giải nhất', rows: 1, indexes: [16] },
-    { name: 'Giải đặc biệt', rows: 1, indexes: [17] },
-  ];
+  const prizeLevels = {
+    giai8: 'Giải tám',
+    giai7: 'Giải bảy',
+    giai6: 'Giải sáu',
+    giai5: 'Giải năm',
+    giai4: 'Giải tư',
+    giai3: 'Giải ba',
+    giai2: 'Giải nhì',
+    giai1: 'Giải nhất',
+    giaidb: 'Giải đặc biệt',
+  };
 
   const { control, handleSubmit } = useForm<any>();
 
@@ -58,7 +58,7 @@ export function BitContainer() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'grid', justifyItems: 'center' }}>
       <Box sx={{ m: 6, width: '60%' }}>
         <Box>
           <Form onSubmit={handleSubmit(onHandleSubmit)}>
@@ -76,7 +76,11 @@ export function BitContainer() {
             </Button>
             <br />
             <Button
-              onClick={() => setTotalAmountReward([])}
+              onClick={() => {
+                setTotalAmountToPayFor(0);
+                setTotalAmountReward([]);
+                setTotalAmountToSpend(0);
+              }}
               type="button"
               color="danger"
               fullWidth
@@ -88,97 +92,95 @@ export function BitContainer() {
         </Box>
         <Box sx={{ my: 3 }}>
           <Box sx={{ display: 'grid', rowGap: 2 }}>
-            <Box>
-              <Chip color="success">Thu: {formatVND(totalAmountToPayFor)}</Chip>
-            </Box>
-            <Box>
-              <Chip color="neutral">Chi: {formatVND(totalAmountToSpend)}</Chip>
-            </Box>
+            <Chip color="success">Thu: {formatVND(totalAmountToPayFor)}</Chip>
+            <Chip color="warning">Chi: {formatVND(totalAmountToSpend)}</Chip>
           </Box>
           <div className="my-3" />
           <RewardTable data={totalAmountReward} />
         </Box>
       </Box>
 
-      <TableContainer
-        sx={{
-          width: '40%',
-          marginLeft: 'auto',
-          marginRight: 5,
-          fontWeight: 'bold',
-          borderRadius: 2,
-          p: 2,
-          my: 4,
-        }}
-        className="myShadow"
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              {header.map((item) => (
-                <TableCell className="text-[1rem]" key={item}>
-                  {item}
+      {lotteryResult.map((itemResult) => (
+        <TableContainer
+          key={`lottery-result-${itemResult.date}`}
+          sx={{
+            width: '80%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontWeight: 'bold',
+            borderRadius: 2,
+            p: 2,
+            my: 4,
+          }}
+          className="myShadow"
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  colSpan={itemResult.provinces.length + 1}
+                  className="text-[2rem] !text-center !py-4"
+                >
+                  {itemResult.date}
                 </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {prizeLevels.map((prize, prizeIndex) => (
-              <Fragment key={prizeIndex}>
-                <TableRow>
-                  <TableCell rowSpan={prize.rows} className="text-[1rem]">
-                    {prize.name} {/* Left */}
+              </TableRow>
+              <TableRow>
+                <TableCell className="text-[1rem]"></TableCell>
+                {itemResult.provinces.map((province, index) => (
+                  <TableCell key={index} className="text-[1rem]">
+                    {province.province}
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: 'bold',
-                      color:
-                        prizeIndex === 0 || prizeIndex === prizeLevels.length - 1 ? 'maroon' : '',
-                    }}
-                    className="text-[1rem]"
-                  >
-                    {prize?.indexes?.[0] !== undefined && DAI_1[prize?.indexes[0]]}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: 'bold',
-                      color:
-                        prizeIndex === 0 || prizeIndex === prizeLevels.length - 1 ? 'maroon' : '',
-                    }}
-                    className="text-[1rem]"
-                  >
-                    {prize?.indexes?.[0] !== undefined && DAI_2[prize?.indexes[0]]}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: 'bold',
-                      color:
-                        prizeIndex === 0 || prizeIndex === prizeLevels.length - 1 ? 'maroon' : '',
-                    }}
-                    className="text-[1rem]"
-                  >
-                    {prize?.indexes?.[0] !== undefined && DAI_3[prize?.indexes[0]]}
-                  </TableCell>
-                </TableRow>
-
-                {prize.indexes.slice(1).map((index, i) => (
-                  <TableRow key={i}>
-                    <TableCell sx={{ fontWeight: 'bold', color: '' }} className="text-[1rem]">
-                      {DAI_1[index]}
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '' }} className="text-[1rem]">
-                      {DAI_2[index]}
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', color: '' }} className="text-[1rem]">
-                      {DAI_3[index]}
-                    </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            {itemResult.provinces[0]?.province === 'Miền Bắc' ? (
+              <TableBody>
+                {Object.keys(prizeLevels)
+                  .reverse()
+                  .slice(0, 8)
+                  .map((level: any, levelIndex) => (
+                    <TableRow key={`levelIndex-${levelIndex}`}>
+                      <TableCell className="text-[1rem]">{(prizeLevels as any)[level]}</TableCell>
+                      {itemResult.provinces.map((province, provinceIndex) => (
+                        <TableCell
+                          key={`${provinceIndex}-${levelIndex}`}
+                          className={cn('text-[1.5rem] font-bold whitespace-pre-wrap', {
+                            'text-[maroon] text-[2rem]':
+                              levelIndex === 0 ||
+                              levelIndex === Object.keys(prizeLevels).length - 1,
+                          })}
+                        >
+                          {province?.results?.[level]?.map((item) => (
+                            <span className="py-1 pr-4 mr-1 inline-block">{item}</span>
+                          ))}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            ) : (
+              <TableBody>
+                {Object.keys(prizeLevels).map((level: any, levelIndex) => (
+                  <TableRow key={`levelIndex-${levelIndex}`}>
+                    <TableCell className="text-[1rem]">{(prizeLevels as any)[level]}</TableCell>
+                    {itemResult.provinces.map((province, provinceIndex) => (
+                      <TableCell
+                        key={`${provinceIndex}-${levelIndex}`}
+                        className={cn('text-[1.5rem] whitespace-pre-line font-bold', {
+                          'text-[maroon] text-[2rem]':
+                            levelIndex === 0 || levelIndex === Object.keys(prizeLevels).length - 1,
+                        })}
+                      >
+                        {province?.results?.[level]?.join('\n')}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))}
-              </Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableBody>
+            )}
+          </Table>
+        </TableContainer>
+      ))}
     </Box>
   );
 }
