@@ -9,9 +9,8 @@ const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
 
 // Mien Nam
 // Bao lo
-// const mergeBaoLoCheck =
-//   '32b2n2dai12, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 84dd3n2dai12, 38dd8n2dai, 40dd2n2dai, 479xc25n2dai12, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai12, [79.81]da2n1dai1';
-const mergeBaoLoCheck = '';
+const mergeBaoLoCheck =
+  '79b2n2dai, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 35dd3n2dai, 38dd8n2dai, 40dd2n2dai, 355xc25n2dai, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai, [24.41]da2n2dai';
 
 const splitMergedBaoLo = mergeBaoLoCheck.split(',').map((de) => de.trim());
 
