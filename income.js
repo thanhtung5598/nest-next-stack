@@ -300,22 +300,24 @@ const calculateTotalAmountReward = (baoLotList) => {
             const mapWinLo = winLo.map((item) => item.slice(-2));
             const pairsOfWinLo = findPairs(mapWinLo, daNumber);
 
-            if (daiPositionList.length === 1) {
-              reward = pairsOfWinLo.length * amount * 750000;
-            }
+            if (pairsOfWinLo.length) {
+              if (daiPositionList.length === 1) {
+                reward = pairsOfWinLo.length * amount * 750000;
+              }
 
-            if (daiPositionList.length === 2) {
-              reward = pairsOfWinLo.length * amount * 550000;
-            }
+              if (daiPositionList.length === 2) {
+                reward = pairsOfWinLo.length * amount * 550000;
+              }
 
-            winRewards.push({
-              daiIndex,
-              pairsOfWinLo,
-              lo: daNumber,
-              type: 'DA',
-              amount,
-              reward,
-            });
+              winRewards.push({
+                daiIndex,
+                pairsOfWinLo,
+                lo: daNumber,
+                type: 'DA',
+                amount,
+                reward,
+              });
+            }
           }
         });
       }
