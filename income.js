@@ -10,7 +10,7 @@ const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
 // Mien Nam
 // Bao lo
 const mergeBaoLoCheck =
-  '79b2n2dai, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 35dd3n2dai, 38dd8n2dai, 40dd2n2dai, 355xc25n2dai, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai, [24.41]da2n2dai';
+  '37dau2n2dai12, 37duoi4n2dai12, 79b2n2dai, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 35dd3n2dai, 38dd8n2dai, 40dd2n2dai, 355xc25n2dai, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai, [24.41]da2n2dai';
 
 const splitMergedBaoLo = mergeBaoLoCheck.split(',').map((de) => de.trim());
 
@@ -56,7 +56,7 @@ const parseCombinedBet = (combinedBet) => {
   const mainNumberMatch = combinedBet.match(/^(\d+)/); // Capture the main number prefix
   const mainNumber = mainNumberMatch ? mainNumberMatch[1] : null;
 
-  const pattern = /b(\d+)n|xc(\d+)n|dd(\d+)n/g;
+  const pattern = /b(\d+)n|xc(\d+)n|dd(\d+)n|dau(\d+)n|duoi(\d+)n/g;
   const matches = [];
   let match;
 
@@ -66,6 +66,8 @@ const parseCombinedBet = (combinedBet) => {
     if (match[1]) matches.push(`${mainNumber}b${match[1]}n${numberOfDai}dai`);
     if (match[2]) matches.push(`${mainNumber}xc${match[2]}n${numberOfDai}dai`);
     if (match[3]) matches.push(`${mainNumber}dd${match[3]}n${numberOfDai}dai`);
+    if (match[4]) matches.push(`${mainNumber}dau${match[4]}n${numberOfDai}dai`);
+    if (match[5]) matches.push(`${mainNumber}duoi${match[5]}n${numberOfDai}dai`);
   }
 
   const pattern2 = /\[(\d+([.]\d+)*)\]da(\d+)n/g;
@@ -90,6 +92,8 @@ const calculateTotalStake = (baoLotList) => {
       const matchXC = betParse.match(/(\d+)(xc(\d+))n/); // Match for 'xc' followed by 'n'
       const matchDD = betParse.match(/(\d+)(dd(\d+))n/); // Match for 'dd' followed by 'n'
       const matchDA = betParse.match(/\[(\d+([.]\d+)*)\]da(\d+)n/); // Match for 'da' followed by 'n'
+      const matchDau = betParse.match(/(\d+)(dau(\d+))n/); // Match for 'dau' followed by 'n'
+      const matchDuoi = betParse.match(/(\d+)(duoi(\d+))n/); // Match for 'duoi' followed by 'n'
 
       if (matchB) {
         const amount = parseInt(matchB[3]);
@@ -111,6 +115,20 @@ const calculateTotalStake = (baoLotList) => {
         totalStake += suffixDD * 2000 * numberOfDai;
       }
 
+      if (matchDau) {
+        const suffixDau = parseInt(matchDau[3]);
+        const { numberOfDai } = getNumberOfDais(betParse);
+
+        totalStake += suffixDau * 1000 * numberOfDai;
+      }
+
+      if (matchDuoi) {
+        const suffixDuoi = parseInt(matchDuoi[3]);
+        const { numberOfDai } = getNumberOfDais(betParse);
+
+        totalStake += suffixDuoi * 1000 * numberOfDai;
+      }
+
       if (matchDA) {
         const suffixDA = parseInt(matchDA[3]);
         const { numberOfDai } = getNumberOfDais(betParse);
@@ -126,8 +144,7 @@ const calculateTotalStake = (baoLotList) => {
 const parseCombinedBetReward = (combinedBet) => {
   const mainNumberMatch = combinedBet.match(/^(\d+)/); // Capture the main number prefix
   const mainNumber = mainNumberMatch ? mainNumberMatch[1] : null;
-
-  const pattern = /b(\d+)n|xc(\d+)n|dd(\d+)n/g;
+  const pattern = /b(\d+)n|xc(\d+)n|dd(\d+)n|dau(\d+)n|duoi(\d+)n/g;
   const matches = [];
   let match;
 
@@ -137,6 +154,8 @@ const parseCombinedBetReward = (combinedBet) => {
     if (match[1]) matches.push(`${mainNumber}b${match[1]}n${numberOfDai}dai${daiPosition}`);
     if (match[2]) matches.push(`${mainNumber}xc${match[2]}n${numberOfDai}dai${daiPosition}`);
     if (match[3]) matches.push(`${mainNumber}dd${match[3]}n${numberOfDai}dai${daiPosition}`);
+    if (match[4]) matches.push(`${mainNumber}dau${match[4]}n${numberOfDai}dai${daiPosition}`);
+    if (match[5]) matches.push(`${mainNumber}duoi${match[5]}n${numberOfDai}dai${daiPosition}`);
   }
 
   const pattern2 = /\[(\d+([.]\d+)*)\]da(\d+)n/g;
@@ -179,6 +198,8 @@ const calculateTotalAmountReward = (baoLotList) => {
       const matchXC = betParse.match(/(\d+)(xc(\d+))n/); // Match for 'xc' followed by 'n'
       const matchDD = betParse.match(/(\d+)(dd(\d+))n/); // Match for 'dd' followed by 'n'
       const matchDA = betParse.match(/\[(\d+([.]\d+)*)\]da(\d+)n/); // Match for 'da' followed by 'n'
+      const matchDau = betParse.match(/(\d+)(dau(\d+))n/); // Match for 'dau' followed by 'n'
+      const matchDuoi = betParse.match(/(\d+)(duoi(\d+))n/); // Match for 'duoi' followed by 'n'
 
       if (matchB) {
         const { daiPosition } = getNumberOfDais(betParse);
@@ -274,6 +295,74 @@ const calculateTotalAmountReward = (baoLotList) => {
               winLo,
               lo: ddNumber,
               type: 'DD',
+              amount,
+              reward,
+            });
+          }
+        });
+      }
+
+      if (matchDau) {
+        const { daiPosition } = getNumberOfDais(betParse);
+
+        const dauNumber = matchDau[1];
+        const amount = parseInt(matchDau[3]);
+
+        const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
+
+        daiPositionList.forEach((daiIndex) => {
+          let reward = 0;
+
+          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
+            if (loIdx === 0) {
+              if (lo.slice(-dauNumber.length) === dauNumber) {
+                return lo;
+              }
+            }
+          });
+
+          if (winLo.length) {
+            reward = winLo.length * amount * 75000;
+
+            winRewards.push({
+              daiIndex,
+              winLo,
+              lo: dauNumber,
+              type: 'Dau',
+              amount,
+              reward,
+            });
+          }
+        });
+      }
+
+      if (matchDuoi) {
+        const { daiPosition } = getNumberOfDais(betParse);
+
+        const duoiNumber = matchDuoi[1];
+        const amount = parseInt(matchDuoi[3]);
+
+        const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
+
+        daiPositionList.forEach((daiIndex) => {
+          let reward = 0;
+
+          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
+            if (loIdx === 0) {
+              if (lo.slice(-duoiNumber.length) === duoiNumber) {
+                return lo;
+              }
+            }
+          });
+
+          if (winLo.length) {
+            reward = winLo.length * amount * 75000;
+
+            winRewards.push({
+              daiIndex,
+              winLo,
+              lo: duoiNumber,
+              type: 'Duoi',
               amount,
               reward,
             });
