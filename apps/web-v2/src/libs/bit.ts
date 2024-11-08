@@ -1,4 +1,6 @@
-const DAI_1 = [
+/* eslint-disable */
+
+export const DAI_1 = [
   '51',
   '232',
   '6822',
@@ -11,7 +13,7 @@ const DAI_1 = [
   '38235',
   '43444',
   '77958',
-  '89472',
+  '89481',
   '89579',
   '04343',
   '51279',
@@ -19,7 +21,7 @@ const DAI_1 = [
   '066479',
 ];
 
-const DAI_2 = [
+export const DAI_2 = [
   '19',
   '451',
   '9963',
@@ -40,7 +42,28 @@ const DAI_2 = [
   '533584',
 ];
 
-const DAIS = [DAI_1, DAI_2];
+export const DAI_3 = [
+  '19',
+  '451',
+  '9963',
+  '4885',
+  '3010',
+  '2471',
+  '92255',
+  '43671',
+  '07019',
+  '72688',
+  '78243',
+  '68636',
+  '68503',
+  '77361',
+  '70112',
+  '20821',
+  '24097',
+  '533584',
+];
+
+export const DAIS = [DAI_1, DAI_2, DAI_3];
 
 // Mien Nam
 // Bao lo
@@ -87,7 +110,7 @@ const getCostPerN = (bet) => {
   return 0;
 };
 
-const parseCombinedBet = (combinedBet) => {
+const parseCombinedBet = (combinedBet: any) => {
   const mainNumberMatch = combinedBet.match(/^(\d+)/); // Capture the main number prefix
   const mainNumber = mainNumberMatch ? mainNumberMatch[1] : null;
 
@@ -114,10 +137,10 @@ const parseCombinedBet = (combinedBet) => {
   return matches;
 };
 
-const calculateTotalStake = (baoLotList) => {
+export const calculateTotalStake = (baoLotList: any) => {
   let totalStake = 0;
 
-  baoLotList.forEach((bet) => {
+  baoLotList.forEach((bet: any) => {
     const parsedBets = parseCombinedBet(bet);
 
     parsedBets.forEach((betParse) => {
@@ -127,27 +150,27 @@ const calculateTotalStake = (baoLotList) => {
       const matchDA = betParse.match(/\[(\d+([.]\d+)*)\]da(\d+)n/); // Match for 'da' followed by 'n'
 
       if (matchB) {
-        const amount = parseInt(matchB[3]);
+        const amount = parseInt(matchB[3] as any);
         const costPerN = getCostPerN(betParse);
         totalStake += amount * costPerN;
       }
 
       if (matchXC) {
-        const suffixXC = parseInt(matchXC[3]);
+        const suffixXC = parseInt(matchXC[3] as any);
         const { numberOfDai } = getNumberOfDais(betParse);
 
         totalStake += suffixXC * 2000 * numberOfDai;
       }
 
       if (matchDD) {
-        const suffixDD = parseInt(matchDD[3]);
+        const suffixDD = parseInt(matchDD[3] as any);
         const { numberOfDai } = getNumberOfDais(betParse);
 
         totalStake += suffixDD * 2000 * numberOfDai;
       }
 
       if (matchDA) {
-        const suffixDA = parseInt(matchDA[3]);
+        const suffixDA = parseInt(matchDA[3] as any);
         const { numberOfDai } = getNumberOfDais(betParse);
 
         totalStake += suffixDA * 36000 * numberOfDai;
@@ -158,7 +181,7 @@ const calculateTotalStake = (baoLotList) => {
   return totalStake;
 };
 
-const parseCombinedBetReward = (combinedBet) => {
+const parseCombinedBetReward = (combinedBet: any) => {
   const mainNumberMatch = combinedBet.match(/^(\d+)/); // Capture the main number prefix
   const mainNumber = mainNumberMatch ? mainNumberMatch[1] : null;
 
@@ -203,7 +226,7 @@ function findPairs(arr, daNumber) {
   return result;
 }
 
-const calculateTotalAmountReward = (baoLotList) => {
+export const calculateTotalAmountReward = (baoLotList) => {
   const winRewards = [];
 
   baoLotList.forEach((bet) => {

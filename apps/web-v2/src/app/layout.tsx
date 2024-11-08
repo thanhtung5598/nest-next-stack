@@ -7,8 +7,8 @@ import '@/styles/main.css';
 const inter = Inter({ subsets: ['latin-ext'], display: 'swap', variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'bitA Vietnam',
-  description: 'Come to bitA Vietnam',
+  title: 'Bell',
+  description: 'Bell',
 };
 
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {

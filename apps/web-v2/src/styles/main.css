@@ -21,3 +21,7 @@
 .containerWrapper {
   @apply before:content-[''] before:absolute before:bg-primary before:inset-0 before:z-[-1] before:bg-[radial-gradient(ellipse_at_center,_hsl(210,100%,97%),_hsl(0,0%,100%))] before:bg-no-repeat dark:before:bg-[radial-gradient(ellipse_at_center,_hsla(210,100%,16%,0.5),_hsl(220,30%,5%))];
 }
+
+.myShadow {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+}

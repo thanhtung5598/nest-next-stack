@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { Control, FieldError, FieldValues, Path } from 'react-hook-form';
 import { Input } from './Input';
 import { Autocomplete } from './Autocomplete';
+import { TextArea } from './Textarea';
 
 type Form = {
   children: ReactNode;
@@ -43,7 +44,7 @@ const Form = ({ children, onSubmit, ...props }: Form) => {
 };
 
 Form.Input = Input;
-
+Form.TextArea = TextArea;
 Form.Autocomplete = Autocomplete;
 
 export default Form;
