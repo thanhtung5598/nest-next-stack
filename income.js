@@ -5,12 +5,10 @@ const formattedData = lotteryResult[0].provinces.map((provinceData) => {
   return prizes;
 });
 
-const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
-
 // Mien Nam
 // Bao lo
 const mergeBaoLoCheck =
-  '37dau2n2dai12, 37duoi4n2dai12, 79b2n2dai, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 35dd3n2dai, 38dd8n2dai, 40dd2n2dai, 355xc25n2dai, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai, [24.41]da2n2dai';
+  '37dau2n2dai12, 37duoi4n2dai12, 79b2n2dai, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 35dd3n2dai, 38dd8n2dai, 40dd2n2dai, 355xc25n2dai, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai, [24.41]da2n2dai, 232b1nxc10ndd10ndau2nduoi2n2dai12';
 
 const splitMergedBaoLo = mergeBaoLoCheck.split(',').map((de) => de.trim());
 
@@ -187,7 +185,7 @@ function findPairs(arr, daNumber) {
   return result;
 }
 
-const calculateTotalAmountReward = (baoLotList) => {
+const calculateTotalAmountReward = (baoLotList, DAIS) => {
   const winRewards = [];
 
   baoLotList.forEach((bet) => {
@@ -416,7 +414,7 @@ const calculateTotalAmountReward = (baoLotList) => {
 };
 
 const totalAmountToPayFor = calculateTotalStake(splitMergedBaoLo);
-const totalAmountReward = calculateTotalAmountReward(splitMergedBaoLo);
+const totalAmountReward = calculateTotalAmountReward(splitMergedBaoLo, formattedData);
 
 console.log('totalAmountToPayFor', totalAmountToPayFor);
 console.log('totalAmountReward', totalAmountReward);

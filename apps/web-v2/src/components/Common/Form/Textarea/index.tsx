@@ -13,7 +13,6 @@ export const TextArea = (props: any) => {
           <TextareaJoy
             {...field}
             {...innerProps}
-            fullWidth
             size="small"
             margin="normal"
             id={id}

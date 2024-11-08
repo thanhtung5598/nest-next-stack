@@ -39,8 +39,7 @@ export function RewardTable({ data }: RewardTableProps) {
         <TableBody>
           {data.map((item) => {
             const { amount, daiIndex, lo = '', reward, type = '' } = item;
-            const dai =
-              daiIndex !== undefined && lotteryResult[0]?.provinces[daiIndex + 1]?.province;
+            const dai = daiIndex !== undefined && lotteryResult[0]?.provinces[daiIndex]?.province;
             return (
               <TableRow>
                 <TableCell>{dai}</TableCell>

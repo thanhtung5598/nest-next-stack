@@ -14,7 +14,6 @@ export const Input = <T extends FieldValues>(props: TextFieldProps<T>) => {
           <TextField
             {...field}
             {...innerProps}
-            fullWidth
             size="small"
             margin="normal"
             id={id}

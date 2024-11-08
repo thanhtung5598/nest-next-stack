@@ -1,44 +1,32 @@
-/* eslint-disable */
-import lotteryResult from './lotteryResults.json';
+type DaiInfo = {
+  numberOfDai: number;
+  daiPosition: string;
+};
 
-const formattedData = lotteryResult?.[0]?.provinces.map((provinceData) => {
-  const prizes = Object.values(provinceData.results).flat();
-  return prizes;
-});
-
-const DAIS = formattedData; // [DAI_1, DAI_2, DAI_3]
-
-// Mien Nam
-// Bao lo
-const mergeBaoLoCheck =
-  '37dau2n2dai12, 37duoi4n2dai12, 32b2n2dai12, 203b3n2dai, 3330b2n2dai, 330b1n2dai, 30b2n2dai, 25b5n2dai, 3333b3n2dai, 84dd3n2dai12, 38dd8n2dai, 40dd2n2dai, 479xc25n2dai12, 350xc20n2dai, 23b1nxc10ndd10n2dai, 232xc10ndd10n2dai12, [79.81]da2n1dai1';
-
-const splitMergedBaoLo = mergeBaoLoCheck.split(',').map((de) => de.trim());
-
-const getNumberOfDais = (checkString) => {
+const getNumberOfDais = (checkString: string): DaiInfo => {
   const match = checkString.match(/(\d+)dai(.*)/);
 
   if (match) {
     return {
-      numberOfDai: parseInt(match[1]),
-      daiPosition: match[2],
+      numberOfDai: parseInt(match[1] || ''),
+      daiPosition: match[2] || '',
     };
   }
 
   return {
     numberOfDai: 1,
-    daiPosition: match[2],
+    daiPosition: '',
   };
 };
 
-const getCostPerN = (bet) => {
+const getCostPerN = (bet: string) => {
   const match = bet.match(/(\d+)(b(\d+))n/);
   const { numberOfDai } = getNumberOfDais(bet);
 
   if (match) {
     const prefix = match[1];
 
-    const length = prefix.length;
+    const length = prefix?.length;
     switch (length) {
       case 2:
         return 18000 * numberOfDai;
@@ -53,7 +41,7 @@ const getCostPerN = (bet) => {
   return 0;
 };
 
-const parseCombinedBet = (combinedBet: any) => {
+const parseCombinedBet = (combinedBet: string) => {
   const mainNumberMatch = combinedBet.match(/^(\d+)/); // Capture the main number prefix
   const mainNumber = mainNumberMatch ? mainNumberMatch[1] : null;
 
@@ -82,10 +70,10 @@ const parseCombinedBet = (combinedBet: any) => {
   return matches;
 };
 
-export const calculateTotalStake = (baoLotList: any) => {
+export const calculateTotalStake = (baoLotList: string[]) => {
   let totalStake = 0;
 
-  baoLotList.forEach((bet: any) => {
+  baoLotList.forEach((bet) => {
     const parsedBets = parseCombinedBet(bet);
 
     parsedBets.forEach((betParse) => {
@@ -171,7 +159,7 @@ const parseCombinedBetReward = (combinedBet: any) => {
   return matches;
 };
 
-function findPairs(arr, daNumber) {
+function findPairs(arr: number[], daNumber: [number, number]): { [key: number]: number }[] {
   const result = [];
   let i = 0;
 
@@ -189,8 +177,8 @@ function findPairs(arr, daNumber) {
   return result;
 }
 
-export const calculateTotalAmountReward = (baoLotList) => {
-  const winRewards = [];
+export const calculateTotalAmountReward = (baoLotList: string[], dais: any) => {
+  const winRewards: any = [];
 
   baoLotList.forEach((bet) => {
     const parsedBets = parseCombinedBetReward(bet);
@@ -205,14 +193,14 @@ export const calculateTotalAmountReward = (baoLotList) => {
 
       if (matchB) {
         const { daiPosition } = getNumberOfDais(betParse);
-        const bNumber = matchB[1];
-        const amount = parseInt(matchB[3]);
+        const bNumber = matchB[1] as string;
+        const amount = parseInt(matchB[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
-          const winLo = DAIS[daiIndex].filter((lo) => {
+          const winLo = dais[daiIndex].filter((lo: string) => {
             return lo.slice(-bNumber.length) === bNumber;
           });
           if (winLo.length) {
@@ -241,16 +229,16 @@ export const calculateTotalAmountReward = (baoLotList) => {
       if (matchXC) {
         const { daiPosition } = getNumberOfDais(betParse);
 
-        const xcNumber = matchXC[1];
-        const amount = parseInt(matchXC[3]);
+        const xcNumber = matchXC[1] as string;
+        const amount = parseInt(matchXC[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
-          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
-            if (loIdx === 1 || loIdx === DAIS[daiIndex].length - 1) {
-              if (lo.slice(-xcNumber.length) === xcNumber) {
+          const winLo = dais[daiIndex].filter((lo: string, loIdx: number) => {
+            if (loIdx === 1 || loIdx === dais[daiIndex].length - 1) {
+              if (lo.slice(-xcNumber?.length) === xcNumber) {
                 return lo;
               }
             }
@@ -274,15 +262,15 @@ export const calculateTotalAmountReward = (baoLotList) => {
       if (matchDD) {
         const { daiPosition } = getNumberOfDais(betParse);
 
-        const ddNumber = matchDD[1];
-        const amount = parseInt(matchDD[3]);
+        const ddNumber = matchDD[1] as string;
+        const amount = parseInt(matchDD[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
-          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
-            if (loIdx === 0 || loIdx === DAIS[daiIndex].length - 1) {
+          const winLo = dais[daiIndex].filter((lo: string, loIdx: number) => {
+            if (loIdx === 0 || loIdx === dais[daiIndex].length - 1) {
               if (lo.slice(-ddNumber.length) === ddNumber) {
                 return lo;
               }
@@ -307,15 +295,15 @@ export const calculateTotalAmountReward = (baoLotList) => {
       if (matchDau) {
         const { daiPosition } = getNumberOfDais(betParse);
 
-        const dauNumber = matchDau[1];
-        const amount = parseInt(matchDau[3]);
+        const dauNumber = matchDau[1] as string;
+        const amount = parseInt(matchDau[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
 
-          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
+          const winLo = dais[daiIndex].filter((lo: string, loIdx: number) => {
             if (loIdx === 0) {
               if (lo.slice(-dauNumber.length) === dauNumber) {
                 return lo;
@@ -341,15 +329,15 @@ export const calculateTotalAmountReward = (baoLotList) => {
       if (matchDuoi) {
         const { daiPosition } = getNumberOfDais(betParse);
 
-        const duoiNumber = matchDuoi[1];
-        const amount = parseInt(matchDuoi[3]);
+        const duoiNumber = matchDuoi[1] as string;
+        const amount = parseInt(matchDuoi[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
 
-          const winLo = DAIS[daiIndex].filter((lo, loIdx) => {
+          const winLo = dais[daiIndex].filter((lo: string, loIdx: number) => {
             if (loIdx === 0) {
               if (lo.slice(-duoiNumber.length) === duoiNumber) {
                 return lo;
@@ -375,20 +363,20 @@ export const calculateTotalAmountReward = (baoLotList) => {
       if (matchDA) {
         const { daiPosition } = getNumberOfDais(betParse);
 
-        const daNumber = matchDA[1].split('.');
-        const amount = parseInt(matchDA[3]);
+        const daNumber = matchDA[1]?.split('.') as [string, string];
+        const amount = parseInt(matchDA[3] as string);
 
         const daiPositionList = daiPosition.split('').map((dai) => parseInt(dai, 10) - 1);
 
         daiPositionList.forEach((daiIndex) => {
           let reward = 0;
-          const winLo = DAIS[daiIndex].filter((lo) => {
+          const winLo = dais[daiIndex].filter((lo: string) => {
             return lo.slice(-2) === daNumber[0] || lo.slice(-2) === daNumber[1];
           });
 
           if (winLo.length) {
-            const mapWinLo = winLo.map((item) => item.slice(-2));
-            const pairsOfWinLo = findPairs(mapWinLo, daNumber);
+            const mapWinLo = winLo.map((item: string) => item.slice(-2));
+            const pairsOfWinLo = findPairs(mapWinLo, daNumber as any);
 
             if (pairsOfWinLo.length) {
               if (daiPositionList.length === 1) {
@@ -416,9 +404,3 @@ export const calculateTotalAmountReward = (baoLotList) => {
 
   return winRewards;
 };
-
-const totalAmountToPayFor = calculateTotalStake(splitMergedBaoLo);
-const totalAmountReward = calculateTotalAmountReward(splitMergedBaoLo);
-
-console.log('totalAmountToPayFor', totalAmountToPayFor);
-console.log('totalAmountReward', totalAmountReward);
